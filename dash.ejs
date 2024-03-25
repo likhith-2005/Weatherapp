@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            background-image: url("6-Best-Free-and-Paid-Weather-APIs-1024x576.webp");
+            
+            
+            
+        }
+
+        nav {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #city-form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #city-input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .weather-info {
+            text-align: left;
+        }
+
+        .weather-info p {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .forecast {
+            margin-top: 30px;
+        }
+
+        .forecast-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .forecast-item p {
+            margin: 0;
+        }
+
+        .forecast-item .date {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Weather Dashboard</h1>
+    </nav>
+    <div class="container">
+        <form id="city-form">
+            <input type="text" id="city-input" placeholder="Enter city name" required>
+            <button type="submit">Get Weather</button>
+        </form>
+        <div class="weather-info">
+            <p>Weather information will be displayed here.</p>
+        </div>
+        <div class="forecast">
+            <h2>5-Day Forecast</h2>
+            <div class="forecast-items">
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const apiKey = '54d5274e6eca4c0684484048242503'; // WeatherAPI key
+            const cityInput = document.getElementById('city-input');
+            const weatherInfo = document.querySelector('.weather-info');
+            const forecastItems = document.querySelector('.forecast-items');
+
+            function fetchWeather(city) {
+                const apiUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=5&aqi=no`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        
+                        weatherInfo.innerHTML = `
+                            <p>City: ${data.location.name}</p>
+                            <p>Temperature: ${data.current.temp_c}°C</p>
+                            <p>Description: ${data.current.condition.text}</p>
+                        `;
+
+                       
+                        forecastItems.innerHTML = '';
+                        for (let i = 1; i < data.forecast.forecastday.length; i++) {
+                            const forecastDay = data.forecast.forecastday[i];
+                            const date = forecastDay.date;
+                            const maxTemp = forecastDay.day.maxtemp_c;
+                            const minTemp = forecastDay.day.mintemp_c;
+                            const condition = forecastDay.day.condition.text;
+
+                            const forecastItem = document.createElement('div');
+                            forecastItem.classList.add('forecast-item');
+                            forecastItem.innerHTML = `
+                                <p class="date">${date}</p>
+                                <p>Max Temp: ${maxTemp}°C</p>
+                                <p>Min Temp: ${minTemp}°C</p>
+                                <p>Condition: ${condition}</p>
+                            `;
+                            forecastItems.appendChild(forecastItem);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching weather data:', error);
+                        weatherInfo.innerHTML = '<p>Error fetching weather data</p>';
+                    });
+            }
+
+            // Event listener for form submission
+            document.getElementById('city-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const city = cityInput.value.trim();
+                if (city !== '') {
+                    fetchWeather(city);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
