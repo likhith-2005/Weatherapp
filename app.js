@@ -6,7 +6,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 
-// Serve static files from the 'public' directory
+
 app.use(express.static(path.join(__dirname, "anime")));
 
 const serviceAccount = require('./key.json');
@@ -17,24 +17,24 @@ initializeApp({
 
 const db = getFirestore();
 
-app.set("views", path.join(__dirname, "anime")); // Set the views directory
-app.set("view engine", "ejs"); // Set EJS as the view engine
-app.use(bodyParser.urlencoded({ extended: true })); // Middleware to parse POST request body
+app.set("views", path.join(__dirname, "anime")); 
+app.set("view engine", "ejs"); 
+app.use(bodyParser.urlencoded({ extended: true })); 
 
-// Hashing passwords
+
 const bcrypt = require('bcrypt');
-const saltRounds = 10; // Salt rounds for bcrypt
+const saltRounds = 10; 
 
 app.get("/signup", function (req, res) {
-  res.render("signup"); // Render signup.ejs
+  res.render("signup"); 
 });
 
 app.get("/login", function (req, res) {
-  res.render("login"); // Render login.ejs
+  res.render("login");
 });
 
 app.get("/dashboard", function (req, res) {
-  res.render("dash"); // Render dash.ejs
+  res.render("dash"); 
 });
 
 app.post("/signupSubmit", function (req, res) {
@@ -47,7 +47,7 @@ app.post("/signupSubmit", function (req, res) {
     db.collection("todo")
       .add({
         email: email,
-        password: hash // Store the hashed password in the database
+        password: hash 
       })
       .then(() => {
         res.send("Sign up is successful. Please login.");
@@ -75,7 +75,7 @@ app.post("/loginSubmit", function (req, res) {
           return res.status(500).send("Error: Unable to login. Please try again later.");
         }
         if (result) {
-          res.redirect("/dashboard"); // Redirect to dashboard upon successful login
+          res.redirect("/dashboard"); 
         } else {
           res.send("Incorrect password.");
         }
